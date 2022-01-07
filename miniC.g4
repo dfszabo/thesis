@@ -125,7 +125,6 @@ declarationSpecifier
     :   storageClassSpecifier
     |   typeSpecifier
     |   typeQualifier
-    |   functionSpecifier
     ;
 
 initDeclaratorList
@@ -140,8 +139,6 @@ storageClassSpecifier
     :   'typedef'
     |   'extern'
     |   'static'
-    |   'auto'
-    |   'register' // parse it but ignore it
     ;
 
 typeSpecifier
@@ -211,12 +208,6 @@ enumerationConstant
 
 typeQualifier
     :   'const'
-    |   'restrict' // TODO: to be decided to support it or not
-    |   'volatile' // TODO: to be decided to support it or not
-    ;
-
-functionSpecifier
-    :   'inline' // TODO: to be decided to support it or not
     ;
 
 declarator
@@ -232,7 +223,6 @@ directDeclarator
     |   '(' typeSpecifier? pointer directDeclarator ')' // function pointer like: (__cdecl *f)
     ;
 
-// TODO: point of this?
 nestedParenthesesBlock
     :   (   ~('(' | ')')
         |   '(' nestedParenthesesBlock ')'
@@ -350,9 +340,6 @@ iterationStatement
     |   For '(' forCondition ')' statement
     ;
 
-//    |   'for' '(' expression? ';' expression?  ';' forUpdate? ')' statement
-//    |   For '(' declaration  expression? ';' expression? ')' statement
-
 forCondition
 	:   (forDeclaration | expression?) ';' forExpression? ';' forExpression?
 	;
@@ -394,7 +381,6 @@ declarationList
     :   declaration+
     ;
 
-Auto : 'auto';
 Break : 'break';
 Case : 'case';
 Char : 'char';
@@ -408,13 +394,9 @@ Enum : 'enum';
 Extern : 'extern';
 Float : 'float';
 For : 'for';
-Goto : 'goto'; // not supported but parsed
 If : 'if';
-Inline : 'inline';
 Int : 'int';
 Long : 'long';
-Register : 'register';
-Restrict : 'restrict'; // not supported but parsed
 Return : 'return';
 Short : 'short';
 Signed : 'signed';
@@ -426,14 +408,14 @@ Typedef : 'typedef';
 Union : 'union';
 Unsigned : 'unsigned';
 Void : 'void';
-Volatile : 'volatile'; // not supported but parsed
 While : 'while';
 
-// parse these but ignore them or better, give error message that these not supported, except _Bool
+Bool : '_Bool';
+
+// parse these but give error message that these not supported
 Alignas : '_Alignas';
 Alignof : '_Alignof';
 Atomic : '_Atomic';
-Bool : '_Bool';
 Complex : '_Complex';
 Generic : '_Generic';
 Imaginary : '_Imaginary';
@@ -477,7 +459,6 @@ Semi : ';';
 Comma : ',';
 
 Assign : '=';
-// '*=' | '/=' | '%=' | '+=' | '-=' | '<<=' | '>>=' | '&=' | '^=' | '|='
 StarAssign : '*=';
 DivAssign : '/=';
 ModAssign : '%=';
@@ -507,7 +488,6 @@ fragment
 IdentifierNondigit
     :   Nondigit
     |   UniversalCharacterName
-    //|   // other implementation-defined characters...
     ;
 
 fragment
